@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-font="medium" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>科技教育創意實作競賽【資訊科技組】 程式實作解題與競賽全攻略</title>
+  <meta name="description" content="科技教育創意實作競賽資訊科技組全方位實作解題指南，涵蓋 Scratch 與 Blockly 雙軌積木教學、演算法思維拆解、官方題庫解析與一鍵全自動批次測試驗證系統。">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: {
+              750: '#293548',
+              850: '#151e2e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-theme="dark" class="min-h-screen selection:bg-cyan-500 selection:text-white flex flex-col">
+
+  <!-- ===== 1. 密碼驗證鎖定畫面 (Password Gate nato) ===== -->
+  <div id="passwordGate">
+    <div id="passwordGateCard">
+      <div class="text-4xl mb-2 animate-bounce">🔐</div>
+      <h2 class="text-xl md:text-2xl font-black text-white tracking-tight mb-1">
+        科技教育創意實作競賽平台
+      </h2>
+      <p class="text-xs text-slate-400 mb-6">
+        資訊科技組 · Scratch × Blockly 雙軌解題與評測系統
+      </p>
+
+      <form onsubmit="handleUnlock(event)" class="space-y-4">
+        <div>
+          <input type="password" id="gatePasswordInput" 
+                 placeholder="請輸入系統通行密碼..." 
+                 class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-indigo-500/40 text-white text-sm text-center placeholder-slate-500 focus:outline-none focus:border-indigo-400 transition tracking-widest font-mono">
+          <div id="gateErrorMsg" class="text-xs text-rose-400 mt-2 hidden flex items-center justify-center gap-1">
+            <i class="fa-solid fa-circle-exclamation"></i> 密碼錯誤，請重新輸入！
+          </div>
+        </div>
+
+        <button type="submit" 
+                class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-500/30 transition hover:scale-[1.02] active:scale-[0.98]">
+          <i class="fa-solid fa-lock-open mr-1.5"></i> 確認解鎖進入平台
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-slate-700/60 text-xs text-slate-400 flex items-center justify-center gap-1.5">
+        <i class="fa-regular fa-lightbulb text-amber-400"></i>
+        <span>系統通行密碼：<strong class="text-cyan-300 font-mono text-sm underline decoration-cyan-500/50">nato</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 2. 頂部雙層功能控制列 (Top Navigation & Toolbars) ===== -->
+  <header class="sticky top-0 z-40 backdrop-blur-md border-b shadow-lg transition">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- 第一行：網站識別 + 字型 + 布景 + 鎖定按鈕 -->
+      <div class="flex items-center justify-between h-16 border-b theme-border py-2">
+        <!-- Logo & Title -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition">
+            <i class="fa-solid fa-code text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-sm md:text-base font-black text-white tracking-tight flex items-center gap-2">
+              科技教育創意實作競賽
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hidden sm:inline-block">資訊科技組</span>
+            </h1>
+            <p class="text-[11px] theme-text-sub font-medium hidden md:block">Scratch × Blockly 雙軌實戰 · 評測模擬批次驗證系統</p>
+          </div>
+        </a>
+
+        <!-- 右上方控制工具組：字型中/大/特大 + 四色布景 + 鎖定 -->
+        <div class="flex items-center gap-3">
+          <!-- 字型切換組 (中、大、特大) -->
+          <div class="flex items-center gap-1 p-1 rounded-xl theme-card-sub border theme-border">
+            <span class="text-[11px] theme-text-muted px-1.5 hidden sm:inline"><i class="fa-solid fa-font"></i> 字型</span>
+            <button onclick="setFontSize('medium')" data-font="medium" class="font-btn px-2 py-1 rounded-lg text-xs transition" title="標準字型 (16px)">中</button>
+            <button onclick="setFontSize('large')" data-font="large" class="font-btn px-2 py-1 rounded-lg text-xs transition" title="放大字型 (19px)">大</button>
+            <button onclick="setFontSize('xlarge')" data-font="xlarge" class="font-btn px-2 py-1 rounded-lg text-xs transition" title="特大字型 (22px)">特大</button>
+          </div>
+
+          <!-- 四色布景切換 (淺、深、綠、藍) -->
+          <div class="flex items-center gap-1 p-1 rounded-xl theme-card-sub border theme-border">
+            <span class="text-[11px] theme-text-muted px-1.5 hidden sm:inline"><i class="fa-solid fa-palette"></i> 布景</span>
+            <button onclick="setTheme('light')" data-theme="light" class="theme-btn px-2 py-1 rounded-lg text-xs bg-slate-100 text-slate-800 transition" title="淺色明亮">淺</button>
+            <button onclick="setTheme('dark')" data-theme="dark" class="theme-btn px-2 py-1 rounded-lg text-xs bg-slate-900 text-white transition" title="深色極客">深</button>
+            <button onclick="setTheme('green')" data-theme="green" class="theme-btn px-2 py-1 rounded-lg text-xs bg-emerald-800 text-emerald-100 transition" title="自然清新綠">綠</button>
+            <button onclick="setTheme('blue')" data-theme="blue" class="theme-btn px-2 py-1 rounded-lg text-xs bg-sky-900 text-sky-100 transition" title="科技海洋藍">藍</button>
+          </div>
+
+          <!-- 重新鎖定按鈕 -->
+          <button onclick="lockSite()" class="p-2 rounded-xl theme-card-sub border theme-border theme-text-sub hover:text-rose-400 hover:border-rose-500/40 transition" title="重新鎖定平台 (密碼: nato)">
+            <i class="fa-solid fa-lock text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 第二行：五大核心功能分頁標籤 (Tabs) -->
+      <nav class="flex items-center justify-between overflow-x-auto py-2.5 gap-2 scrollbar-none tab-bar text-xs font-bold">
+        <div class="flex items-center gap-2">
+          <button onclick="switchTab('guide')" data-tab="guide" class="tab-btn px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap active">
+            <i class="fa-solid fa-compass text-cyan-400"></i>
+            <span>1. 平台規範與操作</span>
+          </button>
+          <button onclick="switchTab('basic')" data-tab="basic" class="tab-btn px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-seedling text-emerald-400"></i>
+            <span>2. 入門基礎實作</span>
+          </button>
+          <button onclick="switchTab('classic')" data-tab="classic" class="tab-btn px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-shapes text-cyan-400"></i>
+            <span>3. 經典主題題庫</span>
+          </button>
+          <button onclick="switchTab('advanced')" data-tab="advanced" class="tab-btn px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-award text-purple-400"></i>
+            <span>4. 競賽進階實戰</span>
+          </button>
+          <button onclick="switchTab('batch')" data-tab="batch" class="tab-btn px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap text-amber-300">
+            <i class="fa-solid fa-bolt-lightning text-yellow-400"></i>
+            <span>5. 線上批次評測沙盒</span>
+          </button>
+        </div>
+
+        <!-- 學習進度條 -->
+        <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl theme-card-sub border theme-border">
+          <span class="text-[11px] theme-text-muted">掌握度</span>
+          <div class="w-16 bg-slate-700 h-2 rounded-full overflow-hidden">
+            <div id="navbar-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+          </div>
+          <span id="navbar-progress-text" class="theme-text-sub font-mono text-[11px]">0/11</span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== 3. 主頁面橫幅 (Hero Banner) ===== -->
+  <section class="relative overflow-hidden pt-10 pb-12 border-b theme-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold backdrop-blur-sm">
+        <i class="fa-solid fa-trophy text-amber-400"></i> 教育部國民及學前教育署 科技教育實作競賽培訓指南
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight max-w-4xl mx-auto">
+        科技教育創意實作競賽【資訊科技組】<br>
+        <span class="bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+          程式實作解題與競賽評測全攻略
+        </span>
+      </h2>
+
+      <p class="theme-text-sub text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+        完整收錄 11 大核心題庫、Scratch 與 Blockly 雙積木對照圖解、52 張官方高清教學截圖、演算法避坑指南與全自動批次測試驗證系統！
+      </p>
+
+      <!-- 統計數據 -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto pt-2">
+        <div class="p-3 rounded-2xl theme-card border">
+          <div class="text-xl font-black text-cyan-400 font-mono">11</div>
+          <div class="text-[11px] theme-text-muted mt-0.5">經典競賽題庫</div>
+        </div>
+        <div class="p-3 rounded-2xl theme-card border">
+          <div class="text-xl font-black text-indigo-400 font-mono">52</div>
+          <div class="text-[11px] theme-text-muted mt-0.5">高清積木截圖</div>
+        </div>
+        <div class="p-3 rounded-2xl theme-card border">
+          <div class="text-xl font-black text-emerald-400 font-mono">34+</div>
+          <div class="text-[11px] theme-text-muted mt-0.5">官方範例測資</div>
+        </div>
+        <div class="p-3 rounded-2xl theme-card border">
+          <div class="text-xl font-black text-purple-400 font-mono">100%</div>
+          <div class="text-[11px] theme-text-muted mt-0.5">線上批次驗證</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. 分頁內容主體容器 (Tab Panels) ===== -->
+  <main id="main-tab-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 flex-grow">
+
+    <!-- 分頁 1：平台規範與操作 (Tab: guide) -->
+    <section id="tab-panel-guide" class="space-y-6">
+      <div class="border-b theme-border pb-3">
+        <span class="text-xs font-bold text-cyan-400 tracking-wider uppercase">TAB 01 · PLATFORM & I/O RULES</span>
+        <h2 class="text-xl sm:text-2xl font-black text-white mt-1">競賽規範與解題環境核心指南</h2>
+        <p class="text-xs theme-text-sub mt-1">掌握評測系統標準通訊協議：事件驅動、輸入讀取與說出輸出</p>
+      </div>
+      <div id="platform-guide-content"></div>
+    </section>
+
+    <!-- 分頁 2：入門基礎實作 (Tab: basic) -->
+    <section id="tab-panel-basic" class="space-y-6 hidden">
+      <div class="border-b theme-border pb-3">
+        <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">TAB 02 · FUNDAMENTALS</span>
+        <h2 class="text-xl sm:text-2xl font-black text-white mt-1">入門基礎實作範例 (2 題)</h2>
+        <p class="text-xs theme-text-sub mt-1">迴圈計次累加、條件分支判斷、清單法 vs 邊讀邊加記憶體省時優化</p>
+      </div>
+
+      <!-- 入門基礎分析導引卡 -->
+      <div class="p-5 rounded-2xl theme-card border space-y-2">
+        <h3 class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+          <i class="fa-solid fa-lightbulb"></i> 基礎實作核心思考方向
+        </h3>
+        <p class="text-xs theme-text-sub leading-relaxed">
+          1. <strong>數列加總</strong>：初學者常以清單存入所有數字再迴圈加總；若已確定所有數列只需累加，可直接使用單一變數「邊讀邊加」，省去清單配置，程式碼行數少且執行更高速！<br>
+          2. <strong>超商收銀</strong>：商品價格依序累加為總金額，重點在於付款金額大於等於總金額時計算應找零錢（剛好付清為 0 元）；不足時輸出「付款金額不足」，注意文字與空格必須 100% 精確。
+        </p>
+      </div>
+
+      <div id="container-basic" class="space-y-10"></div>
+    </section>
+
+    <!-- 分頁 3：經典主題題庫 (Tab: classic) -->
+    <section id="tab-panel-classic" class="space-y-6 hidden">
+      <div class="border-b theme-border pb-3">
+        <span class="text-xs font-bold text-cyan-400 tracking-wider uppercase">TAB 03 · CORE TOPICS</span>
+        <h2 class="text-xl sm:text-2xl font-black text-white mt-1">六大經典主題評測庫 (6 題)</h2>
+        <p class="text-xs theme-text-sub mt-1">涵蓋偶數和、三角形判斷、刮刮樂、遊樂場門票、歌唱比賽、質數和</p>
+      </div>
+
+      <!-- 經典主題分析導引卡 -->
+      <div class="p-5 rounded-2xl theme-card border space-y-2">
+        <h3 class="font-bold text-sm text-cyan-400 flex items-center gap-2">
+          <i class="fa-solid fa-lightbulb"></i> 經典主題關鍵思維與避坑要點
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs theme-text-sub pt-1">
+          <div class="p-3 rounded-xl theme-card-sub border">
+            <strong class="text-cyan-300 block mb-1">📐 三角形最長邊優化</strong>
+            直接找出最大邊，只要檢驗「兩短邊之和 > 最長邊」即可，無需繁瑣驗證三次！
+          </div>
+          <div class="p-3 rounded-xl theme-card-sub border">
+            <strong class="text-amber-300 block mb-1">🎟️ 刮刮樂防扣分避坑</strong>
+            取字元法若遇輸入格式微變易扣分，推薦以百位/十位/個位商餘數值拆解法為標準解法。
+          </div>
+          <div class="p-3 rounded-xl theme-card-sub border">
+            <strong class="text-rose-300 block mb-1">🎤 歌唱比賽型別轉換</strong>
+            清單取出元素若為文字，相加前務必使用「元素 - 0」強制轉型為數值型別！
+          </div>
+        </div>
+      </div>
+
+      <div id="container-classic" class="space-y-10"></div>
+    </section>
+
+    <!-- 分頁 4：競賽進階實戰 (Tab: advanced) -->
+    <section id="tab-panel-advanced" class="space-y-6 hidden">
+      <div class="border-b theme-border pb-3">
+        <span class="text-xs font-bold text-purple-400 tracking-wider uppercase">TAB 04 · ADVANCED CHALLENGES</span>
+        <h2 class="text-xl sm:text-2xl font-black text-white mt-1">三大競賽進階實戰題 (3 題)</h2>
+        <p class="text-xs theme-text-sub mt-1">防災演習臨時屋、電影院找座位連續排列、大富翁環形棋盤餘數定理</p>
+      </div>
+
+      <!-- 競賽進階實戰分析導引卡 -->
+      <div class="p-5 rounded-2xl theme-card border space-y-2">
+        <h3 class="font-bold text-sm text-purple-400 flex items-center gap-2">
+          <i class="fa-solid fa-lightbulb"></i> 高階競賽演算法解法核心
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs theme-text-sub pt-1">
+          <div class="p-3 rounded-xl theme-card-sub border">
+            <strong class="text-purple-300 block mb-1">🚨 防災演習 0 人邊界</strong>
+            若運輸人數為 0，必須最先判斷直接輸出 0，切勿進入迴圈開放第一間臨時屋！
+          </div>
+          <div class="p-3 rounded-xl theme-card-sub border">
+            <strong class="text-sky-300 block mb-1">🎬 電影院連續排法推導</strong>
+            連續 K 人在空位長度 L 排法為 (L - K + 1) 種，圖解椅子模型加總各段空位。
+          </div>
+          <div class="p-3 rounded-xl theme-card-sub border">
+            <strong class="text-amber-300 block mb-1">🎲 大富翁環形餘數定理</strong>
+            循環公式：((pos - 1 + step) % N) + 1；金錢不足只扣到 0 為止（非負保底）。
+          </div>
+        </div>
+      </div>
+
+      <div id="container-advanced" class="space-y-10"></div>
+    </section>
+
+    <!-- 分頁 5：線上批次評測沙盒 (Tab: batch) -->
+    <section id="tab-panel-batch" class="space-y-6 hidden">
+      <div class="border-b theme-border pb-3 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-amber-400 tracking-wider uppercase">TAB 05 · BATCH TEST RUNNER</span>
+          <h2 class="text-xl sm:text-2xl font-black text-white mt-1">線上多測資一鍵批次全測沙盒</h2>
+          <p class="text-xs theme-text-sub mt-1">「師大只能一個個手動驗證，而我們系統可以全部一起驗證！」</p>
+        </div>
+        <button onclick="runBatchSuiteInline()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs shadow-lg transition flex items-center gap-2 active:scale-95">
+          <i class="fa-solid fa-bolt-lightning text-yellow-300"></i> 一鍵重新全測
+        </button>
+      </div>
+
+      <!-- 摘要報告 -->
+      <div id="inline-batch-summary"></div>
+
+      <!-- 批次結果表格 -->
+      <div class="overflow-x-auto rounded-2xl border theme-border theme-card">
+        <table class="w-full text-left text-xs">
+          <thead class="theme-card-sub text-slate-300 font-semibold border-b theme-border">
+            <tr>
+              <th class="py-3 px-3">題目名稱</th>
+              <th class="py-3 px-3">測試輸入 (Input)</th>
+              <th class="py-3 px-3">官方預期 (Expected)</th>
+              <th class="py-3 px-3">本系統運算 (Actual)</th>
+              <th class="py-3 px-3 text-center">評測判定</th>
+              <th class="py-3 px-3 text-right">耗時</th>
+            </tr>
+          </thead>
+          <tbody id="inline-batch-results-list" class="divide-y theme-border"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== 5. 高解析度圖片燈箱 (Lightbox Modal) ===== -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden items-center justify-center p-4" onclick="if(event.target === this) closeLightbox()">
+    <div class="relative max-w-5xl max-h-[92vh] w-full flex flex-col items-center">
+      <div class="w-full flex items-center justify-between text-white pb-3 px-2">
+        <span id="lightbox-caption" class="text-xs sm:text-sm font-medium text-slate-300 truncate max-w-[80%]"></span>
+        <button onclick="closeLightbox()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition" title="關閉 (Esc)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="relative w-full flex-grow flex items-center justify-center overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/80">
+        <img id="lightbox-img" src="" alt="大圖檢視" class="max-h-[80vh] max-w-full object-contain select-none">
+        <button onclick="navLightbox(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white flex items-center justify-center border border-slate-700 transition" title="上一張 (←)">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button onclick="navLightbox(1)" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white flex items-center justify-center border border-slate-700 transition" title="下一張 (→)">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 6. 頁腳 (Footer) ===== -->
+  <footer class="border-t theme-border theme-card py-8 mt-16 text-xs theme-text-muted">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-md bg-indigo-600/30 text-indigo-400 flex items-center justify-center text-xs">
+          <i class="fa-solid fa-code"></i>
+        </div>
+        <span>科技教育創意實作競賽【資訊科技組】 程式實作解題與競賽評測全攻略</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>🔐 通行密碼保護：<code>nato</code></span>
+        <span>·</span>
+        <span>純前端靜態架構 · 支援 GitHub Pages 部署</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 資料與核心邏輯 -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

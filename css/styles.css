@@ -1,0 +1,204 @@
+/* 科技教育創意實作競賽【資訊科技組】 專屬樣式表 */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+
+/* ===== 字型根大小動態控制 ===== */
+html[data-font="medium"] {
+  font-size: 16px;
+}
+html[data-font="large"] {
+  font-size: 19px;
+}
+html[data-font="xlarge"] {
+  font-size: 22px;
+}
+
+/* ===== 四色布景色彩變數 (Themes) ===== */
+/* 1. 淺色 (Light) */
+body[data-theme="light"] {
+  --bg-main: #f8fafc;
+  --bg-header: rgba(255, 255, 255, 0.95);
+  --bg-card: #ffffff;
+  --bg-card-sub: #f1f5f9;
+  --bg-card-hover: #e2e8f0;
+  --border-color: #e2e8f0;
+  --border-focus: #3b82f6;
+  --text-main: #0f172a;
+  --text-sub: #475569;
+  --text-muted: #64748b;
+  --accent-color: #2563eb;
+  --accent-light: rgba(37, 99, 235, 0.1);
+  --header-border: #cbd5e1;
+}
+
+/* 2. 深色 (Dark) - 預設極客科技風 */
+body[data-theme="dark"] {
+  --bg-main: #0b0f19;
+  --bg-header: rgba(15, 23, 42, 0.95);
+  --bg-card: #151c2c;
+  --bg-card-sub: #0f1422;
+  --bg-card-hover: #1e293b;
+  --border-color: #242f45;
+  --border-focus: #6366f1;
+  --text-main: #f8fafc;
+  --text-sub: #94a3b8;
+  --text-muted: #64748b;
+  --accent-color: #6366f1;
+  --accent-light: rgba(99, 102, 241, 0.15);
+  --header-border: #1e293b;
+}
+
+/* 3. 綠色 (Green) - 自然清新護眼風 */
+body[data-theme="green"] {
+  --bg-main: #032115;
+  --bg-header: rgba(6, 44, 30, 0.95);
+  --bg-card: #064e3b;
+  --bg-card-sub: #022c22;
+  --bg-card-hover: #047857;
+  --border-color: #065f46;
+  --border-focus: #10b981;
+  --text-main: #f0fdf4;
+  --text-sub: #a7f3d0;
+  --text-muted: #6ee7b7;
+  --accent-color: #10b981;
+  --accent-light: rgba(16, 185, 129, 0.18);
+  --header-border: #047857;
+}
+
+/* 4. 藍色 (Blue) - 深邃科技海洋湛藍 */
+body[data-theme="blue"] {
+  --bg-main: #061e38;
+  --bg-header: rgba(8, 38, 70, 0.95);
+  --bg-card: #0c4a6e;
+  --bg-card-sub: #042544;
+  --bg-card-hover: #075985;
+  --border-color: #0284c7;
+  --border-focus: #38bdf8;
+  --text-main: #f0f9ff;
+  --text-sub: #bae6fd;
+  --text-muted: #7dd3fc;
+  --accent-color: #38bdf8;
+  --accent-light: rgba(56, 189, 248, 0.18);
+  --header-border: #0369a1;
+}
+
+/* 全域套用自訂變數 */
+body {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+header {
+  background-color: var(--bg-header) !important;
+  border-color: var(--header-border) !important;
+}
+
+.theme-card {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+.theme-card-sub {
+  background-color: var(--bg-card-sub) !important;
+  border-color: var(--border-color) !important;
+}
+
+.theme-text-sub {
+  color: var(--text-sub) !important;
+}
+
+.theme-text-muted {
+  color: var(--text-muted) !important;
+}
+
+.theme-border {
+  border-color: var(--border-color) !important;
+}
+
+/* 等寬字體 */
+code, pre, .font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* 自訂滾動條 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* ===== 密碼鎖定畫面 (Password Gate nato) ===== */
+#passwordGate {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 15, 25, 0.88);
+  backdrop-filter: blur(16px);
+  padding: 1.5rem;
+}
+
+#passwordGateCard {
+  background: rgba(21, 28, 44, 0.95);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  border-radius: 1.5rem;
+  padding: 2.25rem 2rem;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  animation: gatePopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes gatePopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 分頁按鈕樣式 */
+.tab-btn {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background-color: var(--accent-color) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* 列印友善樣式 */
+@media print {
+  header, #passwordGate, #batch-modal, #lightbox-modal, .tab-bar, .no-print, button {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  article {
+    page-break-inside: avoid;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    margin-bottom: 2rem !important;
+  }
+}
